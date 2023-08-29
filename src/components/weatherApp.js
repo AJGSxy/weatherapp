@@ -1,8 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import WeatherForm from "./weatherForm";
+import WeatherMainInfo from "./weatherMainInfo";
 
 export default function WeatherApp() {
     const [weather, setWeather] = useState(null);
+
+    useEffect(() => {
+        loadInfo();
+    }, []);
+
+    useEffect(() => {
+
+        document.title = `Weather ${weather?.location.name ?? ""}`;
+
+    }, [weather]);
 
     async function loadInfo(city = 'london') {
         try {
@@ -10,6 +21,9 @@ export default function WeatherApp() {
             );
 
             const json = await request.json();
+
+            setWeather(json);
+
             console.log(json);
 
         } catch (error) {
@@ -30,7 +44,7 @@ export default function WeatherApp() {
     return (
         <div>
             <WeatherForm onChangeCity={handleChangeCity} />
-            <div>Info</div>
+            <WeatherMainInfo weather={weather} />
         </div>
     );
 };
