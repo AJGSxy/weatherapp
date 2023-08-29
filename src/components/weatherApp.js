@@ -2,51 +2,46 @@ import { useEffect, useState } from "react";
 import WeatherForm from "./weatherForm";
 import WeatherMainInfo from "./weatherMainInfo";
 
-import styles from './weatherApp.module.css';
+import styles from "./weatherApp.module.css";
 
 export default function WeatherApp() {
-    const [weather, setWeather] = useState(null);
+  const [weather, setWeather] = useState(null);
 
-    useEffect(() => {
-        loadInfo();
-    }, []);
+  useEffect(() => {
+    loadInfo();
+  }, []);
 
-    useEffect(() => {
+  useEffect(() => {
+    document.title = `Weather ${weather?.location.name ?? ""}`;
+  }, [weather]);
 
-        document.title = `Weather ${weather?.location.name ?? ""}`;
+  async function loadInfo(city = "london") {
+    try {
+      const request = await fetch(
+        `${process.env.REACT_APP_URL}&key=${process.env.REACT_APP_KEY}&q=${city}`
+      );
 
-    }, [weather]);
+      const json = await request.json();
 
-    async function loadInfo(city = 'london') {
-        try {
-            const request = await fetch(`${process.env.REACT_APP_URL}&key=${process.env.REACT_APP_KEY}&q=${city}`
-            );
+      setTimeout(() => {
+        setWeather(json);
+      }, 2000);
 
-            const json = await request.json();
+      console.log(json);
+    } catch (error) {}
+  }
 
-            setWeather(json);
+  function handleChangeCity(city) {
+    setWeather(null);
+    console.log(city);
 
-            console.log(json);
+    loadInfo(city);
+  }
 
-        } catch (error) {
-
-        }
-
-    }
-
-    function handleChangeCity(city) {
-        setWeather(null);
-        console.log(city)
-
-        loadInfo(city);
-
-    }
-
-
-    return (
-        <div className={styles.weatherContainer}>
-            <WeatherForm onChangeCity={handleChangeCity} />
-            <WeatherMainInfo weather={weather} />
-        </div>
-    );
-};
+  return (
+    <div className={styles.weatherContainer}>
+      <WeatherForm onChangeCity={handleChangeCity} />
+      <WeatherMainInfo weather={weather} />
+    </div>
+  );
+}

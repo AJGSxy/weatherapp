@@ -1,4 +1,4 @@
-import styles from "./weatherMainInfo.modules.css";
+import styles from "./weatherMainInfo.module.css";
 export default function WeatherMainInfo({ weather }) {
   return (
     <div className={styles.mainInfo}>
